@@ -1,39 +1,96 @@
-require 'pry'
+ require 'pry'
 
 class Player
-
+  attr_accessor :name, :lives, :points
   def initialize(name)
     @name = name
     @lives = 3
     @points = 0
   end
-
-  def name
-    @name
-  end
-
-  def name=(name)
-    @name = name
-  end
-
-  def lives
-    @lives
-  end
-
-  def lives=(lives)
-    @lives = lives
-    puts "#{@name} IS THE WINNER! now he gets a Scotch" if lives == 0
-  end
-
-  def points
-    @points
-  end
-
-  def points=(points)
-    @points = points
-  end
-
 end
+
+@jim = Player.new ("jim")
+@bob = Player.new ("bob")
+
+def player_turn(player)
+  num1 = rand(1..20)
+  num2 = rand(1..20)
+  math_type = [:+, :-,:*].sample
+  puts "#{player.name}: what is #{num1} #{math_type} #{num2}"
+  problem = num1.send(math_type, num2)
+  answer = gets.chomp
+  answer = answer.to_i
+
+  if answer != problem
+    player.lives -= 1
+    puts "WRONG! you just lost a life! #{player.name}'s' lives = #{player.lives}"
+  else
+    player.points += 1
+    puts "CORRECT! you just got a point! #{player.name}'s' point = #{player.points}"
+  end
+end
+
+def play(player1, player2)
+  until player1.lives == 0 || player2.lives == 0
+    puts player_turn(player1)
+    puts player_turn(player2) if player1.lives > 0
+
+    if player1.lives > 0 && player2.lives > 0
+      puts "#{player2.name}'s lives are #{player2.lives}, #{player1.name}'s lives are #{player1.lives}"
+    elsif player1.lives == 0
+      puts "#{player2.name}'s lives are #{player2.lives}"
+    elsif player2.lives == 0
+      puts "#{player1.name}'s lives are #{player1.lives}"
+    end
+  end
+    puts "#{player1.name} IS THE WINNER! now he gets a Scotch" if player1.lives > 0
+    puts "#{player2.name} IS THE WINNER! now he gets a Scotch" if player2.lives > 0
+end
+
+def math_game(player1, player2)
+  puts "Hello, curently your names are #{player1.name} and #{player2.name}. Would you like to change your name? (yes or no)"
+  change_name_decision = gets.chomp.downcase
+
+  if change_name_decision == "yes"
+    puts "#{player1.name} what would you like your name to be?"
+    player1.name = gets.chomp
+    puts "#{player2.name} what would you like your name to be?"
+    player2.name = gets.chomp
+  end
+
+  puts "Hello #{player1.name} and #{player2.name} are you ready to play! (Yes or No)"
+  start = gets.chomp
+
+  case start.downcase
+    when 'yes'
+      puts "Great, lets get started"
+      play(player1, player2)
+
+    when 'no'
+      puts "Why did you open this then!"
+
+    else
+      puts "well... thats not one of the options. Please put something I can understand. You know. Like the directions say"
+  end
+end
+
+def replay
+  begin
+    puts "that was fun! did you want to play again?"
+    play_again = gets.chomp.downcase
+    if play_again == "yes"
+      @jim.lives += 3
+      @bob.lives += 3
+      math_game(@jim, @bob)
+    end
+  end until play_again == "no"
+
+  puts "Have a great day!"
+end
+
+math_game(@jim, @bob)
+replay
+
 
 @jim = Player.new ("jim")
 @bob = Player.new ("bob")
